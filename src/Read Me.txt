@@ -1,0 +1,36 @@
+搭建spring mvc基本环境:
+
+   1: 配置前端控制器,配置在web.xml中(用来加载spring mvc的配置文件 + 过滤前端的请求)
+   
+      <init-param>
+  		<param-name>contextConfigLocation</param-name>
+  		<param-value>classpath:mvc-bean.xml</param-value>
+  	</init-param>
+  	  mvc只处理后缀为 *.abc的请求
+  	 <servlet-mapping>
+	  	<servlet-name>DispatcherServlet</servlet-name>
+	  	<!-- 配置过滤的路径,只要 *.mvc则是spring mvc需要处理的请求 -->
+	  	<url-pattern>*.abc</url-pattern>
+	  </servlet-mapping>
+	  
+   2: 编写ProductController(控制层), Component代表当前Bean交给spring管理，代表访问当前Controller的地址：@RequestMapping
+   
+      @Component(value = "pc")
+		@RequestMapping("/product") // 访问当前controller的地址
+		public class ProductController {
+		
+			// 如果前端<Input name属性与后端product的name属性相同则会自动注入
+			@RequestMapping("/save")
+			public String save(Product product) {
+				// 1: 获取参数框架已经注入
+				System.out.println(product);
+				// 2: 此处会调用productService.save();
+				// 3: 返回跳转页面
+				return "forward:/query.jsp";
+			}
+		}
+   
+   3：如果要让注解生效则mvc-bean.xml中开启注解扫描: <context:component-scan base-package="cn.yd.oa.controller" />
+   
+   4: save.jsp中按照规则访问controller:  工程名/product/save.abc
+   
